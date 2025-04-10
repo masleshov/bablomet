@@ -1,0 +1,142 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/masleshov/projects/bablomet/Bablomet.PRO.Telegram/Bablomet.PRO.Telegram.csproj": {}
+  },
+  "projects": {
+    "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj",
+        "projectName": "Bablomet.Common",
+        "projectPath": "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj",
+        "packagesPath": "/home/masleshov/.nuget/packages/",
+        "outputPath": "/home/masleshov/projects/bablomet/Bablomet.Common/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/masleshov/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Refit.HttpClientFactory": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.114/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/masleshov/projects/bablomet/Bablomet.PRO.Telegram/Bablomet.PRO.Telegram.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/masleshov/projects/bablomet/Bablomet.PRO.Telegram/Bablomet.PRO.Telegram.csproj",
+        "projectName": "Bablomet.PRO.Telegram",
+        "projectPath": "/home/masleshov/projects/bablomet/Bablomet.PRO.Telegram/Bablomet.PRO.Telegram.csproj",
+        "packagesPath": "/home/masleshov/.nuget/packages/",
+        "outputPath": "/home/masleshov/projects/bablomet/Bablomet.PRO.Telegram/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/masleshov/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj": {
+                "projectPath": "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Confluent.Kafka": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.1.28, )"
+            },
+            "Npgsql": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            },
+            "Telegram.Bot": {
+              "target": "Package",
+              "version": "[22.4.4, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/8.0.114/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

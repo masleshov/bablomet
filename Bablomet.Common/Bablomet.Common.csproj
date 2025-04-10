@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+      <Nullable>disable</Nullable>
+      <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Confluent.Kafka">
+      <HintPath>..\..\..\.nuget\packages\confluent.kafka\2.3.0\lib\net6.0\Confluent.Kafka.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\7.0.14\ref\net7.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Http">
+      <HintPath>..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\7.0.14\ref\net7.0\Microsoft.Extensions.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>..\..\..\.nuget\packages\microsoft.aspnetcore.app.ref\7.0.14\ref\net7.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\..\..\.nuget\packages\npgsql\8.0.1\lib\net7.0\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="Refit">
+      <HintPath>..\..\..\.nuget\packages\refit\7.0.0\lib\net7.0\Refit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>

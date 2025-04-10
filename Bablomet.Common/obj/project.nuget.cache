@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "KX27SSoHHqPsrr/dFe0wQPFlJl7rd0wyZ01LFZ3QX8iNtf7Q2chPHV+JTqzfg9jO9Xr4AVxag7gz2DYcEqI7QA==",
+  "success": true,
+  "projectFilePath": "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj",
+  "expectedPackageFiles": [
+    "/home/masleshov/.nuget/packages/microsoft.extensions.dependencyinjection/7.0.0/microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/7.0.0/microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/microsoft.extensions.http/7.0.0/microsoft.extensions.http.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/microsoft.extensions.logging/7.0.0/microsoft.extensions.logging.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/microsoft.extensions.logging.abstractions/7.0.0/microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/microsoft.extensions.options/7.0.0/microsoft.extensions.options.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/microsoft.extensions.primitives/7.0.0/microsoft.extensions.primitives.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/refit/7.0.0/refit.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/refit.httpclientfactory/7.0.0/refit.httpclientfactory.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/system.net.http.json/7.0.1/system.net.http.json.7.0.1.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/system.text.encodings.web/7.0.0/system.text.encodings.web.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/system.text.json/7.0.3/system.text.json.7.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

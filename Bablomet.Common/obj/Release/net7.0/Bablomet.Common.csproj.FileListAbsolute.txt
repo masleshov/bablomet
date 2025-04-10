@@ -1,0 +1,17 @@
+/home/masleshov/dev/bablomet/Bablomet.Common/bin/Release/net7.0/Bablomet.Common.deps.json
+/home/masleshov/dev/bablomet/Bablomet.Common/bin/Release/net7.0/Bablomet.Common.dll
+/home/masleshov/dev/bablomet/Bablomet.Common/bin/Release/net7.0/Bablomet.Common.pdb
+/home/masleshov/dev/bablomet/Bablomet.Common/bin/Release/net7.0/Confluent.Kafka.dll
+/home/masleshov/dev/bablomet/Bablomet.Common/bin/Release/net7.0/Npgsql.dll
+/home/masleshov/dev/bablomet/Bablomet.Common/bin/Release/net7.0/Confluent.Kafka.xml
+/home/masleshov/dev/bablomet/Bablomet.Common/bin/Release/net7.0/Npgsql.xml
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.csproj.AssemblyReference.cache
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.GeneratedMSBuildEditorConfig.editorconfig
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.AssemblyInfoInputs.cache
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.AssemblyInfo.cs
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.csproj.CoreCompileInputs.cache
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.csproj.CopyComplete
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.dll
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/refint/Bablomet.Common.dll
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.pdb
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/ref/Bablomet.Common.dll
