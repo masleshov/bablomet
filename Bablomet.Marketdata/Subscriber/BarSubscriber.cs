@@ -59,8 +59,9 @@ public sealed class BarSubscriber
                 };
                 _subscriptions.TryAdd(command.Guid, command);
                 _socket.Send(JsonSerializer.Serialize(command));
-            }
 
+                await Task.Delay(100);
+            }
         }
     }
 
@@ -115,7 +116,7 @@ public sealed class BarSubscriber
 
         Task.Run(async () => 
         {
-            var kafkaConnector = new KafkaConnector();
+            var kafkaConnector = new KafkaConnector<KafkaBarKey, string>();
             while (!_token.IsCancellationRequested)
             {
                 var bar = await queue.ReceiveAsync();
@@ -127,7 +128,7 @@ public sealed class BarSubscriber
                 }
 
                 _logger.LogInformation($"Received bar {JsonSerializer.Serialize(bar)}");
-                await kafkaConnector.Send(KafkaTopics.GetBarTopic(bar.Symbol, bar.TimeFrame), JsonSerializer.Serialize(bar));
+                await kafkaConnector.Send(KafkaTopics.BarsTopic, new KafkaBarKey(bar.Symbol, bar.TimeFrame), JsonSerializer.Serialize(bar));
             }
         });
     }

@@ -17,6 +17,7 @@ using Bablomet.Marketdata.Mapping;
 using Bablomet.Marketdata.Repository;
 using Bablomet.Marketdata.Subscriber;
 using Bablomet.Marketdata.WebSocket;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -66,6 +67,8 @@ var alorOauthClient = app.Services.GetRequiredService<IAlorOauthClient>();
 await AlorJwtHolder.Init(alorOauthClient);
 Console.WriteLine("Jwt: " + AlorJwtHolder.Jwt);
 
+await KafkaConnector<Null, Null>.CreateTopics(KafkaTopics.BarsTopic, KafkaTopics.IndicatorsTopic);
+
 var uow = app.Services.GetRequiredService<UnitOfWork>();
 await InstrumentsCache.Init(alorClient);
 
@@ -83,8 +86,8 @@ foreach (var instrument in InstrumentsCache.Instruments.Values)
 var logger = app.Logger;
 
 var timeFrames = new [] { TimeFrames.Minute, TimeFrames.Minutes5, TimeFrames.Minutes15, TimeFrames.Minutes60, TimeFrames.Days };
-var webSockets = new List<WebSocket>();
 
+var webSockets = new List<WebSocket>();
 InstrumentSubscriber instrumentSubscriber = null;
 var ws = WebSocketHelper.Subscribe(
     url: "wss://api.alor.ru/ws",
@@ -112,20 +115,20 @@ var ws = WebSocketHelper.Subscribe(
 );
 webSockets.Add(ws);
 
-BarSubscriber barSubscriber = null;
 var tokenSource = new CancellationTokenSource();
-ws = WebSocketHelper.Subscribe(
-    url: "wss://api.alor.ru/ws",
+ws = new WebSocketSharp.WebSocket("wss://api.alor.ru/ws");
+var barSubscriber = new BarSubscriber(
+    socket: ws, 
+    uow: app.Services.GetRequiredService<UnitOfWork>(), 
+    logger: app.Logger,
+    token: tokenSource.Token
+);
+WebSocketHelper.Subscribe(
+    ws: ws,
     onOpen: async socket => 
     {
         if (!backtestFrom.HasValue)
         {
-            barSubscriber = new BarSubscriber(
-                socket: socket, 
-                uow: app.Services.GetRequiredService<UnitOfWork>(), 
-                logger: app.Logger,
-                token: tokenSource.Token
-            );
             await barSubscriber.Subscribe(timeFrames);
         }
 
@@ -139,12 +142,12 @@ ws = WebSocketHelper.Subscribe(
     onClose: async e => 
     {
         logger.LogInformation($"WebSocket connection for bars closed! Reason: {e.Reason}");
-        await tokenSource.CancelAsync();
+        tokenSource.Cancel();
     },
     onError: async e => 
     {
         logger.LogError($"WebSocket error: {e.Message}");
-        await tokenSource.CancelAsync();
+        tokenSource.Cancel();
     }
 );
 webSockets.Add(ws);
@@ -155,7 +158,7 @@ if (backtestFrom.HasValue)
 {
     Console.WriteLine($"Started producing historical data since {backtestFrom.Value}");
     timeFrames = new[] { TimeFrames.Minute, TimeFrames.Minutes5, TimeFrames.Minutes15, TimeFrames.Minutes60, TimeFrames.Days };
-    var kafkaConnector = new KafkaConnector();
+    var kafkaConnector = new KafkaConnector<KafkaBarKey, string>();
 
     var current = backtestFrom.Value;
 
@@ -184,7 +187,7 @@ if (backtestFrom.HasValue)
 
                         foreach (var bar in history)
                         {
-                            await kafkaConnector.Send(KafkaTopics.GetBarTopic(ticker, tf), JsonSerializer.Serialize(new Bar
+                            await kafkaConnector.Send(KafkaTopics.BarsTopic, new KafkaBarKey(ticker, tf), JsonSerializer.Serialize(new Bar
                             {
                                 Symbol = ticker,
                                 TimeFrame = tf,
@@ -214,4 +217,4 @@ if (backtestFrom.HasValue)
 
 await host;
 
-webSockets.ForEach(ws => ws.CloseAsync());
+webSockets.ForEach(ws => ws.Close());

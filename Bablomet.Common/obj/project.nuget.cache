@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "KX27SSoHHqPsrr/dFe0wQPFlJl7rd0wyZ01LFZ3QX8iNtf7Q2chPHV+JTqzfg9jO9Xr4AVxag7gz2DYcEqI7QA==",
+  "dgSpecHash": "1+gIH3wQNo3XTV86JlxDMWofRV7yjuMmJxyRh0Qa0R/PIUsJCtZvQBo+Gg9nxY+7RhSfCbo7+kHVl8v4j+Px8w==",
   "success": true,
-  "projectFilePath": "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj",
+  "projectFilePath": "/home/masleshov/dev/bablomet/Bablomet.Common/Bablomet.Common.csproj",
   "expectedPackageFiles": [
+    "/home/masleshov/.nuget/packages/messagepack/3.1.3/messagepack.3.1.3.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/messagepack.annotations/3.1.3/messagepack.annotations.3.1.3.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/messagepackanalyzer/3.1.3/messagepackanalyzer.3.1.3.nupkg.sha512",
     "/home/masleshov/.nuget/packages/microsoft.extensions.dependencyinjection/7.0.0/microsoft.extensions.dependencyinjection.7.0.0.nupkg.sha512",
     "/home/masleshov/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/7.0.0/microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512",
     "/home/masleshov/.nuget/packages/microsoft.extensions.http/7.0.0/microsoft.extensions.http.7.0.0.nupkg.sha512",
@@ -11,6 +14,7 @@
     "/home/masleshov/.nuget/packages/microsoft.extensions.logging.abstractions/7.0.0/microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512",
     "/home/masleshov/.nuget/packages/microsoft.extensions.options/7.0.0/microsoft.extensions.options.7.0.0.nupkg.sha512",
     "/home/masleshov/.nuget/packages/microsoft.extensions.primitives/7.0.0/microsoft.extensions.primitives.7.0.0.nupkg.sha512",
+    "/home/masleshov/.nuget/packages/microsoft.net.stringtools/17.11.4/microsoft.net.stringtools.17.11.4.nupkg.sha512",
     "/home/masleshov/.nuget/packages/refit/7.0.0/refit.7.0.0.nupkg.sha512",
     "/home/masleshov/.nuget/packages/refit.httpclientfactory/7.0.0/refit.httpclientfactory.7.0.0.nupkg.sha512",
     "/home/masleshov/.nuget/packages/system.net.http.json/7.0.1/system.net.http.json.7.0.1.nupkg.sha512",

@@ -15,3 +15,4 @@
 /home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/refint/Bablomet.Common.dll
 /home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.pdb
 /home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/ref/Bablomet.Common.dll
+/home/masleshov/dev/bablomet/Bablomet.Common/obj/Release/net7.0/Bablomet.Common.sourcelink.json

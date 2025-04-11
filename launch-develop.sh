@@ -15,6 +15,9 @@ rm -rf "$root_path/Bablomet.Marketdata/obj"
 rm -rf "$root_path/Bablomet.PRO.Telegram/bin"
 rm -rf "$root_path/Bablomet.PRO.Telegram/obj"
 
+rm -rf "$root_path/Bablomet.AI.ML/bin"
+rm -rf "$root_path/Bablomet.AI.ML/obj"
+
 # сборка API
 api="$root_path/Bablomet.API/Bablomet.API.csproj"
 dotnet clean $api; dotnet build $api -c Release; dotnet publish $api -c Release
@@ -26,6 +29,9 @@ dotnet clean $marketdata; dotnet build $marketdata -c Release; dotnet publish $m
 # сборка Telegram-бота
 telegram="$root_path/Bablomet.PRO.Telegram/Bablomet.PRO.Telegram.csproj"
 dotnet clean $telegram; dotnet build $telegram -c Release; dotnet publish $telegram -c Release
+
+ml="$root_path/Bablomet.AI.ML/Bablomet.AI.ML.csproj"
+dotnet clean $ml; dotnet build $ml -c Release; dotnet publish $ml -c Release
 
 # запуск docker-compose
 docker compose -f "$root_path/docker-compose.yml" up -d --build

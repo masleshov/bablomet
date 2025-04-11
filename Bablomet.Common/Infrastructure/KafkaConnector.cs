@@ -9,13 +9,13 @@ using Confluent.Kafka.Admin;
 
 namespace Bablomet.Common.Infrastructure;
 
-public class KafkaConnector : IDisposable
+public class KafkaConnector<TKey, TValue> : IDisposable
 {
     private static readonly string ConnectionString = $"{EnvironmentGetter.GetVariable(EnvironmentVariables.KAFKA_HOST)}:{EnvironmentGetter.GetVariable(EnvironmentVariables.KAFKA_PORT)}";
-    private readonly IProducer<Null, string> _producer;
-    private readonly IConsumer<Null, string> _consumer;
+    protected readonly IProducer<TKey, TValue> Producer;
+    protected readonly IConsumer<TKey, TValue> Consumer;
 
-    private readonly Dictionary<string, BufferBlock<string>> _topicCallbackQueues;
+    private readonly Dictionary<string, BufferBlock<Message<TKey, TValue>>> _topicCallbackQueues;
 
     public KafkaConnector()
     {
@@ -31,10 +31,14 @@ public class KafkaConnector : IDisposable
             SessionTimeoutMs = 6000,
             AutoOffsetReset = AutoOffsetReset.Latest
         };
-        _producer = new ProducerBuilder<Null, string>(producerConfig).Build();
-        _consumer = new ConsumerBuilder<Null, string>(consumerConfig).Build();
+        Producer = new ProducerBuilder<TKey, TValue>(producerConfig)
+            .SetKeySerializer(new MessagePackKafkaSerializer<TKey>())
+            .Build();
+        Consumer = new ConsumerBuilder<TKey, TValue>(consumerConfig)
+            .SetKeyDeserializer(new MessagePackKafkaSerializer<TKey>())
+            .Build();
 
-        _topicCallbackQueues = new Dictionary<string, BufferBlock<string>>();
+        _topicCallbackQueues = new Dictionary<string, BufferBlock<Message<TKey, TValue>>>();
     }
 
     public static async Task CreateTopics(params string[] topics)
@@ -47,24 +51,24 @@ public class KafkaConnector : IDisposable
         var existing = adminClient.GetMetadata(TimeSpan.FromSeconds(10)).Topics
             .Select(topic => topic.Topic)
             .ToHashSet();
-        var toCreate = topics.Where(topic => !existing.Contains(topic)).ToArray();
+        var toCreate = topics
+            .Where(topic => !existing.Contains(topic))
+            .Select(topic => new TopicSpecification
+            {
+                Name = topic,
+                // ReplicationFactor = 1,
+                // NumPartitions = 5000
+            })
+            .ToArray();
         foreach (var topic in toCreate)
         {
             try
             {
-                await adminClient.CreateTopicsAsync(new[]
-                {
-                    new TopicSpecification
-                    {
-                        Name = topic,
-                        ReplicationFactor = 1,
-                        NumPartitions = 1
-                    }
-                });
+                await adminClient.CreateTopicsAsync(new[] { topic });
             }
             catch (CreateTopicsException e)
             {
-                // Console.WriteLine($"An error occured creating topic {e.Results[0].Topic}: {e.Results[0].Error.Reason}");
+                Console.WriteLine($"An error occured creating topic {e.Results[0].Topic}: {e.Results[0].Error.Reason}");
             }
         }
     }
@@ -89,78 +93,80 @@ public class KafkaConnector : IDisposable
         }
     }
 
-    public async Task Send(string topic, string message)
+    public async Task Send(string topic, TKey key, TValue message)
     {
         if (string.IsNullOrWhiteSpace(topic)) throw new ArgumentNullException(nameof(topic));
-        if (string.IsNullOrWhiteSpace(message)) throw new ArgumentNullException(nameof(message));
+        if (message == null) throw new ArgumentNullException(nameof(message));
 
-        await CreateTopicIfNotExists(topic);
-        await _producer.ProduceAsync(topic, new Message<Null, string> { Value = message });
+        // await CreateTopicIfNotExists(topic);
+        await Producer.ProduceAsync(topic, new Message<TKey, TValue> { Key = key, Value = message });
     }
 
-    public void StartListen(Dictionary<string, Func<string, Task>> topicCallbacks, CancellationToken token)
+    public void StartListen(Dictionary<string, Func<Message<TKey, TValue>, Task>> topicCallbacks, CancellationToken token)
     {
+        if (topicCallbacks == null || topicCallbacks.Count == 0) throw new ArgumentNullException(nameof(topicCallbacks));
+
+        StartInternalListen( topicCallbacks, token);
+    }
+
+    protected void StartInternalListen(Dictionary<string, Func<Message<TKey, TValue>, Task>> topicCallbacks, CancellationToken token)
+    {
+
+        if (topicCallbacks == null || topicCallbacks.Count == 0) return;
+
+        var topics = topicCallbacks.Keys.ToArray();
+        for (int i = 0; i < topics.Length; i++)
+        {
+            topics[i] = topics[i].Replace("+", "--");
+        }
+
         Task.Run(async () =>
         {
-            if (topicCallbacks == null || topicCallbacks.Count == 0) return;
+            Consumer.Subscribe(topics);
 
-            var topics = topicCallbacks.Keys
-                .Select(t => t.Replace("+", "--"))
-                .ToArray();
-
-            await CreateTopics(topics);
-            _consumer.Subscribe(topics);
-
-            foreach (var topicCallback in topicCallbacks)
+            foreach (var topic in topics)
             {
-                var topic = topicCallback.Key.Replace("+", "--");
-                if (_topicCallbackQueues.TryGetValue(topic, out var queue))
-                {
-                    continue;
-                }
+                if (_topicCallbackQueues.ContainsKey(topic)) continue;
 
-                _topicCallbackQueues[topic] = queue = new BufferBlock<string>();
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                Task.Run(async () =>
+                var queue = new BufferBlock<Message<TKey, TValue>>();
+                _topicCallbackQueues[topic] = queue;
+
+                _ = Task.Run(async () =>
                 {
                     while (!token.IsCancellationRequested)
                     {
                         var message = await queue.ReceiveAsync(token);
-
                         try
                         {
-                            await topicCallback.Value(message);
+                            await topicCallbacks[topic](message);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Console.WriteLine(ex.Message);
                             Console.WriteLine(ex.StackTrace ?? string.Empty);
                         }
                     }
                 }, token);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
 
             while (!token.IsCancellationRequested)
             {
-                var result = _consumer.Consume(token);
-                if (!_topicCallbackQueues.TryGetValue(result.Topic, out var queue))
+                var result = Consumer.Consume(token);
+                if (_topicCallbackQueues.TryGetValue(result.Topic, out var queue))
                 {
-                    throw new NullReferenceException($"No callback queue found for the topic {result.Topic}");
+                    await queue.SendAsync(result.Message, token);
                 }
-
-                await queue.SendAsync(result.Message.Value, token);
             }
         }, token);
     }
 
     public void Dispose()
     {
-        _producer.Flush();
-        _producer.Dispose();
+        Producer.Flush();
+        Producer.Dispose();
         
-        _consumer.Unsubscribe();
-        _consumer.Close();
-        _consumer.Dispose();
+        Consumer.Unsubscribe();
+        Consumer.Close();
+        Consumer.Dispose();
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj": {}
+    "/home/masleshov/dev/bablomet/Bablomet.Common/Bablomet.Common.csproj": {}
   },
   "projects": {
-    "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj": {
+    "/home/masleshov/dev/bablomet/Bablomet.Common/Bablomet.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj",
+        "projectUniqueName": "/home/masleshov/dev/bablomet/Bablomet.Common/Bablomet.Common.csproj",
         "projectName": "Bablomet.Common",
-        "projectPath": "/home/masleshov/projects/bablomet/Bablomet.Common/Bablomet.Common.csproj",
+        "projectPath": "/home/masleshov/dev/bablomet/Bablomet.Common/Bablomet.Common.csproj",
         "packagesPath": "/home/masleshov/.nuget/packages/",
-        "outputPath": "/home/masleshov/projects/bablomet/Bablomet.Common/obj/",
+        "outputPath": "/home/masleshov/dev/bablomet/Bablomet.Common/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/masleshov/.nuget/NuGet/NuGet.Config"
@@ -38,6 +38,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "MessagePack": {
+              "target": "Package",
+              "version": "[3.1.3, )"
+            },
             "Refit.HttpClientFactory": {
               "target": "Package",
               "version": "[7.0.0, )"

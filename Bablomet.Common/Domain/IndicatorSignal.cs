@@ -2,7 +2,7 @@ using Bablomet.Common.Infrastructure;
 
 namespace Bablomet.Common.Domain;
 
-public sealed class IndicatorSignal
+public sealed class IndicatorSignal : IIndicatorSignal
 {
     public IndicatorType IndicatorType { get; set; }
     public int[] Parameters { get; set; }

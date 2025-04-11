@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Bablomet.API;
 using Bablomet.API.Infrastructure;
 using Bablomet.Common.Domain;
 using Bablomet.Common.Infrastructure;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,25 +47,36 @@ app.MapControllers();
 
 await InstrumentsCache.Init(app.Services.GetRequiredService<UnitOfWork>());
 
-var kafkaConnector = new KafkaConnector();
+var kafkaConnector = new KafkaConnector<KafkaBarKey, string>();
 var timeFrames = new [] { TimeFrames.Minute, TimeFrames.Minutes5, TimeFrames.Minutes15, TimeFrames.Minutes60, TimeFrames.Days };
 
-var topicTasks = InstrumentsCache.GetAllInstruments()
-    .SelectMany(i => timeFrames.Select(tf => KafkaTopics.GetBarTopic(i.Symbol, tf)))
-    .Select(topic => new
+var tokenSource = new CancellationTokenSource();
+var queues = new Dictionary<KafkaBarKey, BufferBlock<string>>();
+kafkaConnector.StartListen(new Dictionary<string, Func<Message<KafkaBarKey, string>, Task>>
+{
+    { KafkaTopics.BarsTopic, async message => 
     {
-        Topic = topic,
-        CalculationService = app.Services.GetRequiredService<IndicatorCalculationService>()
-    })
-    .ToDictionary(
-        key => key.Topic,
-        val => new Func<string, Task>(async message => 
+        if (!queues.TryGetValue(message.Key, out var queue))
         {
-            var bar = JsonSerializer.Deserialize<Bar>(message)!;
-            await val.CalculationService.ProcessBarAsync(bar);
-        })
-    );
+            queues[message.Key] = queue = new BufferBlock<string>();
+            _ = Task.Run(async () => 
+            {
+                var service = app.Services.GetRequiredService<IndicatorCalculationService>();
+                while (!tokenSource.IsCancellationRequested)
+                {
+                    var str = await queue.ReceiveAsync();
+                    if (string.IsNullOrWhiteSpace(str)) continue;
 
-kafkaConnector.StartListen(topicTasks, CancellationToken.None);
+                    var bar = JsonSerializer.Deserialize<Bar>(str)!;
+                    await service.ProcessBarAsync(bar);
+                }
+            });
+        }
+
+        await queue.SendAsync(message.Value);
+    }}
+}, tokenSource.Token);
 
 await app.RunAsync();
+
+tokenSource.Cancel();

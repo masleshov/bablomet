@@ -2,6 +2,24 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "bablomet ml",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build bablomet ml",
+            "program": "${workspaceFolder}/Bablomet.AI.ML/bin/Debug/net8.0/Bablomet.AI.ML.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Bablomet.AI.ML",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ADVANCED_LOGGING": "true",
+                "POSTGRES_HOST": "localhost",
+                "KAFKA_HOST": "localhost",
+                "KAFKA_PORT": "29092",
+                "BABLOMET_API_URI": "http://localhost:5001",
+            },
+        },
+        {
             "name": "bablomet telegram bot",
             "type": "coreclr",
             "request": "launch",

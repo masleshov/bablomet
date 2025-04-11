@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bablomet.PRO.Telegram")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85ddfaac815b850afbb04148041bbabe30b111f5")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bablomet.PRO.Telegram")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bablomet.PRO.Telegram")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

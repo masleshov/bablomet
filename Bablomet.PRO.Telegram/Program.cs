@@ -14,6 +14,7 @@ using System.Text.Json;
 using Bablomet.Common.Domain;
 using Bablomet.PRO.Telegram.Infrastructure;
 using Npgsql;
+using Confluent.Kafka;
 
 var host = Host.CreateDefaultBuilder()
     .ConfigureServices((context, services) =>
@@ -38,15 +39,15 @@ IndicatorSubscriptionsCache.Initialize(host.Services.GetRequiredService<UnitOfWo
 var botClient = host.Services.GetRequiredService<ITelegramBotClient>();
 var updateHandler = host.Services.GetRequiredService<UpdateHandler>();
 
-var kafkaConnector = new KafkaConnector();
+var kafkaConnector = new KafkaConnector<KafkaBarKey, string>();
 var indicatorsTopic = EnvironmentGetter.GetVariable(EnvironmentVariables.KAFKA_INDICATORS_TOPIC);
 var indicatorSignalService = host.Services.GetRequiredService<IndicatorSignalService>();
-kafkaConnector.StartListen(new Dictionary<string, Func<string, Task>>
+kafkaConnector.StartListen(new Dictionary<string, Func<Message<KafkaBarKey, string>, Task>>
 {
     {
         indicatorsTopic, async message =>
         {
-            var signal = JsonSerializer.Deserialize<IndicatorSignal>(message);
+            var signal = JsonSerializer.Deserialize<IndicatorSignal>(message.Value);
             await indicatorSignalService.HandleAsync(signal);
         }
     }
