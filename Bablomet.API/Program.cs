@@ -52,6 +52,7 @@ var timeFrames = new [] { TimeFrames.Minute, TimeFrames.Minutes5, TimeFrames.Min
 
 var tokenSource = new CancellationTokenSource();
 var queues = new Dictionary<KafkaBarKey, BufferBlock<string>>();
+var aiTrainingQueues = new Dictionary<KafkaBarKey, BufferBlock<string>>();
 kafkaConnector.StartListen(new Dictionary<string, Func<Message<KafkaBarKey, string>, Task>>
 {
     { KafkaTopics.BarsTopic, async message => 
@@ -59,18 +60,17 @@ kafkaConnector.StartListen(new Dictionary<string, Func<Message<KafkaBarKey, stri
         if (!queues.TryGetValue(message.Key, out var queue))
         {
             queues[message.Key] = queue = new BufferBlock<string>();
-            _ = Task.Run(async () => 
-            {
-                var service = app.Services.GetRequiredService<IndicatorCalculationService>();
-                while (!tokenSource.IsCancellationRequested)
-                {
-                    var str = await queue.ReceiveAsync();
-                    if (string.IsNullOrWhiteSpace(str)) continue;
+            StartCalculatingIndicators(queue, false);
+        }
 
-                    var bar = JsonSerializer.Deserialize<Bar>(str)!;
-                    await service.ProcessBarAsync(bar);
-                }
-            });
+        await queue.SendAsync(message.Value);
+    }},
+    { KafkaTopics.BarsAiTrainingTopic, async message => 
+    {
+        if (!aiTrainingQueues.TryGetValue(message.Key, out var queue))
+        {
+            aiTrainingQueues[message.Key] = queue = new BufferBlock<string>();
+            StartCalculatingIndicators(queue, true);
         }
 
         await queue.SendAsync(message.Value);
@@ -80,3 +80,21 @@ kafkaConnector.StartListen(new Dictionary<string, Func<Message<KafkaBarKey, stri
 await app.RunAsync();
 
 tokenSource.Cancel();
+
+void StartCalculatingIndicators(BufferBlock<string> queue, bool aiTraining)
+{
+    if (queue == null) throw new ArgumentNullException(nameof(queue));
+
+    _ = Task.Run(async () => 
+    {
+        var service = app.Services.GetRequiredService<IndicatorCalculationService>();
+        while (!tokenSource.IsCancellationRequested)
+        {
+            var str = await queue.ReceiveAsync();
+            if (string.IsNullOrWhiteSpace(str)) continue;
+
+            var bar = JsonSerializer.Deserialize<Bar>(str)!;
+            await service.ProcessBarAsync(bar, aiTraining);
+        }
+    });
+}

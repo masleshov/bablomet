@@ -3,13 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Bablomet.API.Repositories;
 using Bablomet.Common.Domain;
-using Bablomet.Common.Infrastructure;
+using Bablomet.Common.Repository;
 
-namespace Bablomet.API;
+namespace Bablomet.Common.Infrastructure;
 
-internal static class InstrumentsCache
+public static class InstrumentsCache
 {
     private static ConcurrentDictionary<string, Instrument> _instruments = new();
     

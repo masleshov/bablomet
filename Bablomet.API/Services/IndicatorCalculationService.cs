@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Bablomet.API.Calculators;
 using Bablomet.Common.Domain;
@@ -31,7 +30,7 @@ public class IndicatorCalculationService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task ProcessBarAsync(Bar bar)
+    public async Task ProcessBarAsync(Bar bar, bool aiTraining)
     {
         var subscriptions = IndicatorSubscriptionsCache.GetSubscriptionsForBar(new BarKey(bar.Symbol, bar.TimeFrame));
 
@@ -40,19 +39,19 @@ public class IndicatorCalculationService
             switch (subscription.IndicatorType)
             {
                 case IndicatorType.SMA when subscription.Parameters.Length == 2:
-                    await ProcessCrossoverAsync(bar, subscription, CalculateSma);
+                    await ProcessCrossoverAsync(bar, subscription, CalculateSma, aiTraining);
                     break;
 
                 case IndicatorType.EMA when subscription.Parameters.Length == 2:
-                    await ProcessCrossoverAsync(bar, subscription, CalculateEma);
+                    await ProcessCrossoverAsync(bar, subscription, CalculateEma, aiTraining);
                     break;
 
                 case IndicatorType.MACD when subscription.Parameters.Length == 3:
-                    await ProcessMacdSignalAsync(bar, subscription);
+                    await ProcessMacdSignalAsync(bar, subscription, aiTraining);
                     break;
 
                 case IndicatorType.VWAP:
-                    await ProcessVwapSignalAsync(bar, subscription);
+                    await ProcessVwapSignalAsync(bar, subscription, aiTraining);
                     break;
 
                 default:
@@ -63,7 +62,7 @@ public class IndicatorCalculationService
         }
     }
 
-    private async Task ProcessCrossoverAsync(Bar bar, IndicatorSubscription subscription, Func<Bar, int, decimal> calculate)
+    private async Task ProcessCrossoverAsync(Bar bar, IndicatorSubscription subscription, Func<Bar, int, decimal> calculate, bool aiTraining)
     {
         var shortPeriod = subscription.Parameters.Min();
         var longPeriod = subscription.Parameters.Max();
@@ -87,7 +86,7 @@ public class IndicatorCalculationService
                     TimeFrame = bar.TimeFrame,
                     Time = bar.Time,
                     Signal = signal
-                });
+                }, aiTraining);
 
                 _logger.LogInformation("{IndicatorType} {Signal} crossover for {Symbol} [{TimeFrame}] {ShortPeriod}({Short}) crossed {LongPeriod}({Long})",
                     subscription.IndicatorType, signal, bar.Symbol, bar.TimeFrame, shortPeriod, shortValue, longPeriod, longValue);
@@ -98,7 +97,7 @@ public class IndicatorCalculationService
         prev.Long = longValue;
     }
 
-    private async Task ProcessMacdSignalAsync(Bar bar, IndicatorSubscription subscription)
+    private async Task ProcessMacdSignalAsync(Bar bar, IndicatorSubscription subscription, bool aiTraining)
     {
         var (shortPeriod, longPeriod, signalPeriod) = (subscription.Parameters[0], subscription.Parameters[1], subscription.Parameters[2]);
         var key = new MacdKey(bar.Symbol, bar.TimeFrame, shortPeriod, longPeriod, signalPeriod);
@@ -122,7 +121,7 @@ public class IndicatorCalculationService
                     TimeFrame = bar.TimeFrame,
                     Time = bar.Time,
                     Signal = signal
-                });
+                }, aiTraining);
 
                 _logger.LogInformation("MACD {Signal} crossover for {Symbol} [{TimeFrame}] MACD({MacdLine}) crossed Signal({SignalLine})",
                     signal, bar.Symbol, bar.TimeFrame, macd.MacdLine, macd.SignalLine);
@@ -133,7 +132,7 @@ public class IndicatorCalculationService
         prev.Long = macd.SignalLine;
     }
 
-    private async Task ProcessVwapSignalAsync(Bar bar, IndicatorSubscription subscription)
+    private async Task ProcessVwapSignalAsync(Bar bar, IndicatorSubscription subscription, bool aiTraining)
     {
         var key = new BarKey(bar.Symbol, bar.TimeFrame);
         var calculator = _vwapCalculators.GetOrAdd(key, _ => new VolumeWeightedAveragePriceCalculator());
@@ -156,7 +155,7 @@ public class IndicatorCalculationService
                     TimeFrame = bar.TimeFrame,
                     Time = bar.Time,
                     Signal = signal
-                });
+                }, aiTraining);
 
                 _logger.LogInformation("VWAP {Signal} crossover for {Symbol} [{TimeFrame}] Price({Price}) crossed VWAP({Vwap})",
                     signal, bar.Symbol, bar.TimeFrame, bar.Close, vwap.Value);

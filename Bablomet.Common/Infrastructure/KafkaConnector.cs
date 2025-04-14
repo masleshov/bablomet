@@ -106,7 +106,7 @@ public class KafkaConnector<TKey, TValue> : IDisposable
     {
         if (topicCallbacks == null || topicCallbacks.Count == 0) throw new ArgumentNullException(nameof(topicCallbacks));
 
-        StartInternalListen( topicCallbacks, token);
+        StartInternalListen(topicCallbacks, token);
     }
 
     protected void StartInternalListen(Dictionary<string, Func<Message<TKey, TValue>, Task>> topicCallbacks, CancellationToken token)

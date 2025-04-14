@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "1+gIH3wQNo3XTV86JlxDMWofRV7yjuMmJxyRh0Qa0R/PIUsJCtZvQBo+Gg9nxY+7RhSfCbo7+kHVl8v4j+Px8w==",
+  "dgSpecHash": "GCb3fVK1grkrhBf0PTbvN1BZkYDNfyMAASUjsgOct/6YnU7v5uCm5m4goGcYNlMfdebNIBeJTM0yz4MBn8fpLA==",
   "success": true,
   "projectFilePath": "/home/masleshov/dev/bablomet/Bablomet.Common/Bablomet.Common.csproj",
   "expectedPackageFiles": [
+    "/home/masleshov/.nuget/packages/dapper/2.1.66/dapper.2.1.66.nupkg.sha512",
     "/home/masleshov/.nuget/packages/messagepack/3.1.3/messagepack.3.1.3.nupkg.sha512",
     "/home/masleshov/.nuget/packages/messagepack.annotations/3.1.3/messagepack.annotations.3.1.3.nupkg.sha512",
     "/home/masleshov/.nuget/packages/messagepackanalyzer/3.1.3/messagepackanalyzer.3.1.3.nupkg.sha512",

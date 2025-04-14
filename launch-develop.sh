@@ -2,7 +2,7 @@ set echo off
 
 root_path=$(dirname $(dirname $0))
 
-docker compose -f "$root_path/docker-compose.yml" down -v
+docker compose -f "$root_path/docker-compose.yml" down
 docker image rm $(docker images | grep "<none>" | awk '{print $3}')
 
 # очистка старых сборок

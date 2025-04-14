@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bablomet.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85ddfaac815b850afbb04148041bbabe30b111f5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+10b7fd5d039d789514acaed2b9c06d83950b1e6e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bablomet.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bablomet.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

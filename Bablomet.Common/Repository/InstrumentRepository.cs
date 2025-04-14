@@ -5,7 +5,7 @@ using Bablomet.Common.Repository;
 using Dapper;
 using Npgsql;
 
-namespace Bablomet.API.Repositories;
+namespace Bablomet.Common.Repository;
 
 internal sealed class InstrumentRepository : BaseRepository
 {

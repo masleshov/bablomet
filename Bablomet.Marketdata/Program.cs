@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebSocketSharp;
+using InstrumentsCache = Bablomet.Marketdata.InstrumentsCache;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -151,6 +152,24 @@ WebSocketHelper.Subscribe(
     }
 );
 webSockets.Add(ws);
+
+app.MapGet("/api/history", async (string symbol, string exchange, string tf, long from, long to, IAlorClient alorClient) => 
+{
+    return (await alorClient.GetBarsHistory(symbol, exchange, tf, from, to))
+        .History
+        .Select(dto => new Bar
+        {
+            Symbol = symbol,
+            TimeFrame = tf,
+            Time = dto.Time,
+            Close = dto.Close,
+            Open = dto.Close,
+            High = dto.High,
+            Low = dto.Low,
+            Volume = dto.Volume
+        })
+        .ToArray();
+});
 
 var host = app.RunAsync("http://0.0.0.0:5000");
 
